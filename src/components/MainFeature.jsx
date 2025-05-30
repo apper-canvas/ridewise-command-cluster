@@ -6,11 +6,12 @@ import { format, addDays } from 'date-fns'
 
 const MainFeature = () => {
   const [activeTab, setActiveTab] = useState('bus')
-  const [searchData, setSearchData] = useState({
+const [searchData, setSearchData] = useState({
     from: '',
     to: '',
     date: format(new Date(), 'yyyy-MM-dd'),
-    passengers: 1,
+    adults: 1,
+    children: 0,
     cabType: 'economy'
   })
   const [showResults, setShowResults] = useState(false)
@@ -102,23 +103,26 @@ const MainFeature = () => {
     const seat = generateSeats().find(s => s.number === seatNumber)
     if (seat.status === 'occupied') return
 
-    setSelectedSeats(prev => {
-      if (prev.includes(seatNumber)) {
+if (prev.includes(seatNumber)) {
         return prev.filter(s => s !== seatNumber)
-      } else if (prev.length < searchData.passengers) {
+      } else if (prev.length < (searchData.adults + searchData.children)) {
         return [...prev, seatNumber]
       } else {
-        toast.warning(`You can only select ${searchData.passengers} seat(s)`)
+        toast.warning(`You can only select ${searchData.adults + searchData.children} seat(s)`)
         return prev
       }
     })
   }
 
   const handleBooking = (item) => {
-    if (activeTab === 'bus' && selectedSeats.length !== searchData.passengers) {
-      toast.error(`Please select ${searchData.passengers} seat(s)`)
+    const totalPassengers = searchData.adults + searchData.children
+    if (activeTab === 'bus' && selectedSeats.length !== totalPassengers) {
+toast.error(`Please select ${totalPassengers} seat(s)`)
       return
     }
+    
+    setCurrentStep('payment')
+    toast.success('Proceeding to payment...')
     
     setCurrentStep('payment')
     toast.success('Proceeding to payment...')
@@ -133,15 +137,19 @@ const MainFeature = () => {
     setTimeout(() => {
       setCurrentStep('search')
       setShowResults(false)
-      setSelectedSeats([])
-      setSearchData({
-        from: '',
-        to: '',
-        date: format(new Date(), 'yyyy-MM-dd'),
-        passengers: 1,
+adults: 1,
+        children: 0,
         cabType: 'economy'
       })
     }, 3000)
+  }
+
+  const SearchForm = () => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="card-glass p-6 sm:p-8"
+    >
   }
 
   const SearchForm = () => (
@@ -225,18 +233,33 @@ const MainFeature = () => {
               />
             </div>
           </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-surface-700">Passengers</label>
+<div className="space-y-2">
+            <label className="block text-sm font-medium text-surface-700">Adults</label>
             <div className="relative">
-              <ApperIcon name="Users" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
+              <ApperIcon name="User" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
               <select
-                value={searchData.passengers}
-                onChange={(e) => setSearchData(prev => ({ ...prev, passengers: parseInt(e.target.value) }))}
+                value={searchData.adults}
+                onChange={(e) => setSearchData(prev => ({ ...prev, adults: parseInt(e.target.value) }))}
                 className="input-field pl-11"
               >
                 {[1,2,3,4,5,6].map(num => (
-                  <option key={num} value={num}>{num} Passenger{num > 1 ? 's' : ''}</option>
+                  <option key={num} value={num}>{num} Adult{num > 1 ? 's' : ''}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-surface-700">Children</label>
+            <div className="relative">
+              <ApperIcon name="Baby" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
+              <select
+                value={searchData.children}
+                onChange={(e) => setSearchData(prev => ({ ...prev, children: parseInt(e.target.value) }))}
+                className="input-field pl-11"
+              >
+                {[0,1,2,3,4,5].map(num => (
+                  <option key={num} value={num}>{num} Child{num > 1 ? 'ren' : num === 1 ? '' : 'ren'}</option>
                 ))}
               </select>
             </div>
@@ -244,6 +267,7 @@ const MainFeature = () => {
 
           {activeTab === 'cab' && (
             <div className="space-y-2">
+<div className="space-y-2">
               <label className="block text-sm font-medium text-surface-700">Cab Type</label>
               <div className="relative">
                 <ApperIcon name="Car" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-surface-400" />
@@ -468,16 +492,18 @@ const MainFeature = () => {
             <h4 className="font-bold text-surface-900 mb-4">Booking Summary</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-surface-600">Selected Seats:</span>
-                <span className="font-medium">{selectedSeats.join(', ') || 'None'}</span>
+</div>
+              <div className="flex justify-between">
+                <span className="text-surface-600">Adults:</span>
+                <span className="font-medium">{searchData.adults}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-surface-600">Passengers:</span>
-                <span className="font-medium">{searchData.passengers}</span>
+                <span className="text-surface-600">Children:</span>
+                <span className="font-medium">{searchData.children}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-surface-600">Price per seat:</span>
-                <span className="font-medium">₹850</span>
+<span className="font-medium">₹850</span>
               </div>
               <hr className="border-surface-300" />
               <div className="flex justify-between text-lg font-bold">
@@ -486,11 +512,8 @@ const MainFeature = () => {
               </div>
             </div>
           </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            onClick={() => handleBooking()}
-            disabled={selectedSeats.length !== searchData.passengers}
+onClick={() => handleBooking()}
+            disabled={selectedSeats.length !== (searchData.adults + searchData.children)}
             className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Proceed to Payment
