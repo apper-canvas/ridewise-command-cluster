@@ -99,11 +99,12 @@ const [searchData, setSearchData] = useState({
     toast.success('Search completed! Found available options.')
   }
 
-  const handleSeatSelect = (seatNumber) => {
+const handleSeatSelect = (seatNumber) => {
     const seat = generateSeats().find(s => s.number === seatNumber)
     if (seat.status === 'occupied') return
 
-if (prev.includes(seatNumber)) {
+    setSelectedSeats((prev) => {
+      if (prev.includes(seatNumber)) {
         return prev.filter(s => s !== seatNumber)
       } else if (prev.length < (searchData.adults + searchData.children)) {
         return [...prev, seatNumber]
@@ -111,7 +112,7 @@ if (prev.includes(seatNumber)) {
         toast.warning(`You can only select ${searchData.adults + searchData.children} seat(s)`)
         return prev
       }
-    })
+    });
   }
 
   const handleBooking = (item) => {
@@ -137,20 +138,16 @@ toast.error(`Please select ${totalPassengers} seat(s)`)
     setTimeout(() => {
       setCurrentStep('search')
       setShowResults(false)
-adults: 1,
+setSearchData({
+        from: '',
+        to: '',
+        date: format(new Date(), 'yyyy-MM-dd'),
+        adults: 1,
         children: 0,
         cabType: 'economy'
       })
     }, 3000)
-  }
-
-  const SearchForm = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="card-glass p-6 sm:p-8"
-    >
-  }
+}
 
   const SearchForm = () => (
     <motion.div
@@ -265,8 +262,6 @@ adults: 1,
             </div>
           </div>
 
-          {activeTab === 'cab' && (
-            <div className="space-y-2">
 <div className="space-y-2">
               <label className="block text-sm font-medium text-surface-700">Cab Type</label>
               <div className="relative">
@@ -283,6 +278,7 @@ adults: 1,
               </div>
             </div>
           )}
+          {activeTab === 'cab' && (
         </div>
 
         <motion.button
@@ -492,7 +488,9 @@ adults: 1,
             <h4 className="font-bold text-surface-900 mb-4">Booking Summary</h4>
             <div className="space-y-3">
               <div className="flex justify-between">
-</div>
+                <span className="text-surface-600">Selected Seats:</span>
+                <span className="font-medium">{selectedSeats.length}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-surface-600">Adults:</span>
                 <span className="font-medium">{searchData.adults}</span>
@@ -512,6 +510,8 @@ adults: 1,
               </div>
             </div>
           </div>
+<motion.button
+            whileHover={{ scale: 1.05 }}
 onClick={() => handleBooking()}
             disabled={selectedSeats.length !== (searchData.adults + searchData.children)}
             className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
