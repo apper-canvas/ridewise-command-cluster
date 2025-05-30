@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-surface-50 text-surface-900 font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary-dark text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white font-medium py-3 px-6 rounded-xl transition-all duration-300;
+  }
+  
+  .card-glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20 rounded-2xl shadow-soft;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 border border-surface-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-300 bg-white/90 backdrop-blur-sm;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
+  }
+  
+  .neu-card {
+    @apply bg-surface-100 rounded-2xl shadow-neu-light;
+  }
+  
+  .transportation-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .seat-available {
+    @apply bg-secondary text-white cursor-pointer hover:bg-secondary-dark transition-colors duration-200;
+  }
+  
+  .seat-occupied {
+    @apply bg-surface-400 text-surface-600 cursor-not-allowed;
+  }
+  
+  .seat-selected {
+    @apply bg-primary text-white;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
+
+.toast-container {
+  @apply z-50;
+}
+
+.toast-custom {
+  @apply rounded-xl shadow-soft;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-surface-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-surface-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-surface-500;
+}
+
+/* Responsive design helpers */
+@screen sm {
+  .container-responsive {
+    @apply max-w-sm mx-auto;
+  }
+}
+
+@screen md {
+  .container-responsive {
+    @apply max-w-2xl;
+  }
+}
+
+@screen lg {
+  .container-responsive {
+    @apply max-w-4xl;
+  }
+}
+
+@screen xl {
+  .container-responsive {
+    @apply max-w-6xl;
+  }
+}
